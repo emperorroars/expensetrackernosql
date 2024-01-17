@@ -43,7 +43,7 @@ sequelize.sync()
     .then(() => {
         console.log('Database tables have been created.');
         app.listen(process.env.PORT, () => {
-            console.log("Server is running");
+           // console.log("Server is running");
         });
     })
     .catch((err) => {
