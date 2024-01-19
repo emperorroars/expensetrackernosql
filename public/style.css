@@ -1,0 +1,50 @@
+.main{
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.5)50%,rgba(0,0,0,0.5)50%), url(1.jpg);
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+}
+.subject{
+    color: orange;  
+}
+#name{
+    border: 2px solid #ff7200;
+    width: 100px;
+    height: 20px;
+}
+#email{
+    border: 2px solid #ff7200;
+    width: 200px;
+    height: 20px;
+}
+#password{
+    border: 2px solid #ff7200;
+    width: 200px;
+    height: 20px;
+}
+#submit{
+    width: 100px;
+    height: 30px;
+    background: #ff7200;
+    border: 2px solid #ff7200;
+    margin-top: 13px;
+    color: #fff;
+    font-size: 15px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+#submit:hover{
+    color: #000;
+}
+a{
+    color: orange; 
+}
+
+a:hover{
+    color: white; 
+}

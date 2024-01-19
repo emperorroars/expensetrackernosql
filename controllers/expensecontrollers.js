@@ -62,24 +62,25 @@ exports.add = async (req, res, next) => {
         description: req.body.description,
         category:req.body.category,
         userId: req.user.id
-      }, { transaction: t });
+       })//, { transaction: t });
+      
   
       const totalExpense = Number(req.user.totalexpense) + Number(req.body.expenseamount);
       console.log(totalExpense);
   
-      await User.update(
-        { totalexpense: totalExpense },
-        {
-          where: { id: req.user.id },
-          transaction: t
-        }
-      );
-  
-      await t.commit();
+      // await User.update(
+      //   { totalexpense: totalExpense },
+      //   {
+      //     where: { id: req.user.id }
+      //     //,transaction: t
+      //   }
+      // );
+  await User.findByIdAndUpdate(req.user.id, { $set: { totalexpense: totalExpense } });
+      //await t.commit();
   
       res.status(200).json({ expense });
     } catch (err) {
-      await t.rollback();
+      //await t.rollback();
       console.log("failed", err);
       return res.status(500).json({ success: false, error: err });
     }
@@ -140,45 +141,43 @@ exports.add = async (req, res, next) => {
 
 
 exports.delete = async (req, res, next) => {
-  const t = await sequelize.transaction();
+  //const t = await sequelize.transaction();
+  console.log("find the delete req",req.params)
 
   try {
     const expenseid = req.params.id;
 
     if (!expenseid) {
-      await t.rollback();
+      //await t.rollback();
       return res.status(400).json({ success: false });
     }
 
-    const expenseuser = await Expenseuser.findOne({
-      where: { id: expenseid, userId: req.user.id },
-      transaction: t,
+    const expenseuser = await Expenseuser.findByIdAndDelete({
+       _id: expenseid, userId: req.user.id ,
+     // transaction: t,
     });
 
     if (!expenseuser) {
-      await t.rollback();
+      //await t.rollback();
       return res.status(404).json({ success: false, message: "Expense doesn't belong to the user" });
     }
 
     const totalExpense = Number(req.user.totalexpense) - Number(expenseuser.expenseamount);
 
-    await User.update(
-      { totalexpense: totalExpense },
-      { where: { id: req.user.id }, transaction: t }
-    );
+    await User.findByIdAndUpdate(req.user.id, { $set: { totalexpense: totalExpense } })
 
-    await Expenseuser.destroy({
-      where: { id: expenseid, userId: req.user.id },
-      transaction: t,
-    });
+   /* await Expenseuser.findByIdAndDelete({
+       id: expenseid, userId: req.user.id 
+      //transaction: t,
+    });*/
 
-    await t.commit();
-    console.log('Transaction committed successfully.');
+   // await t.commit();
+    // console.log('Transaction committed successfully.');
 
     res.status(200).json({ success: true, message: 'Deleted Successfully' });
   } catch (err) {
     console.error(err);
-    await t.rollback();
+   // await t.rollback();
     return res.status(500).json({ success: false, message: 'Failed' });
   }
 };
@@ -245,7 +244,7 @@ function uploadToS3(data,filename){
 
 exports.downloadexpense=async(req,res)=>{
   console.log("reached download")
-  const expenses=await req.user.get()
+  const expenses= await User.findById(req.user.id)
   console.log("this is the user's expense",expenses)
   const stringifiedExpenses=JSON.stringify(expenses)
   const filename='Expense.txt'
@@ -265,9 +264,10 @@ exports.get = async (req, res) => {//here also it might be wrong
   console.log("this is the name and userid ",req.user.name,req.user.id)
   const results={}
   try{
-  const expenseuser = await Expenseuser.findAll({
-    where: {  userId: req.user.id }
+  const expenseuser = await Expenseuser.find({
+       userId: req.user.id 
   });
+    console.log(expenseuser)
   console.log("this is expenseuser",JSON.stringify(expenseuser))
   console.log("this is the length",expenseuser.length)
   if(endIndex<expenseuser.length)                                      //this is wrong for length 

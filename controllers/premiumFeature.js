@@ -1,15 +1,14 @@
 const Expense = require('../models/expensemodels');
 const User = require('../models/user');
-const sequelize = require('sequelize');
+// const sequelize = require('sequelize');
 
 exports. getLeaderBoard = async (req, res) => {
     try {
-        const users = await User.findAll({
-         
-            order: [['totalexpense', 'DESC']]
-        });
-
-        // Assuming 'leaderboardofusers' should be 'users' (from the database)
+      /*  const users = await User.find({
+           
+            //order: [['totalexpense', 'DESC']]
+        });*/
+const users = await User.find({}).sort({ totalexpense: -1 });
         res.status(200).json(users);
     } catch (err) {
         console.log(err); // Corrected from console.og to console.log

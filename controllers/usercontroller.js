@@ -31,17 +31,19 @@ exports.login = async (req, res) => {
   console.log('logging in');
   try {
     const { email, password } = req.body;
+   
     
-    const user = await User.findAll({ where: { email } })
+    const user = await User.findOne({ email:email }) //changed from findAll to findOne,also where cannot be used with findOne
     
-    if (user.length > 0) {
-       bcrypt.compare(password, user[0].password,(err,result)=> {
+    
+    if (user) {
+       bcrypt.compare(password, user.password,(err,result)=> {
         if(err){
           throw new Error('Something went wrong')
         }
         if(result===true)
         {
-        return res.status(200).json({ success: true, message: 'User logged in successfully',token:generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser )});
+        return res.status(200).json({ success: true, message: 'User logged in successfully',token:generateAccessToken(user.id,user.name,user.ispremiumuser )});
       } else {
         return res.status(400).json({ success: false, message: 'Password is incorrect' });
       }

@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
     console.log("see the token ",token);
     const user = jwt.verify(token, 'secretencryption');
     console.log('userID>>>>',user.userId);
-    User.findByPk(user.userId).then(user => {
+    User.findById(user.userId).then(user => {
       console.log("stringified output for token",JSON.stringify(user));
       req.user = user;
       next();

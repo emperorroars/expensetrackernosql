@@ -6,8 +6,9 @@ const passwordroutes=require(`./routes/forgotpassword`)
 const Forgotpassword = require('./models/forgotpassword');
 
 const morgan=require("morgan")
+const mongoose=require('mongoose')
 const fs=require("fs")
-const sequelize = require('./utils/database');
+// const sequelize = require('./utils/database');
 const User = require('./models/user');
 const Order = require(`./models/orders.js`)
 const auth = require('./middleware/auth')
@@ -24,12 +25,12 @@ app.use(cors())
 app.use(express.json())
 
 app.use(morgan('combined',{stream:accessLogStream}))
-User.hasMany(Expenseuser)
-Expenseuser.belongsTo(User)
-User.hasMany(Order)
-Order.belongsTo(User)
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
+// User.hasMany(Expenseuser)
+// Expenseuser.belongsTo(User)
+// User.hasMany(Order)
+// Order.belongsTo(User)
+// User.hasMany(Forgotpassword);
+// Forgotpassword.belongsTo(User);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', mainPageRouter)
 app.use('/user', userroute)
@@ -37,15 +38,24 @@ app.use('/expense', expenseroutes)
 app.use(`/purchase`, purchaseroute)
 app.use(`/premium`, premiumFeatureRoutes)
 app.use(`/password`, passwordroutes)
+console.log(process.env.MONGOOSE_CONNECT)
 
 
-sequelize.sync()
-    .then(() => {
-        console.log('Database tables have been created.');
-        app.listen(process.env.PORT, () => {
-           // console.log("Server is running");
-        });
-    })
-    .catch((err) => {
-        console.error('Error creating database tables:', err);
-    });
+// sequelize.sync()
+//     .then(() => {
+//         console.log('Database tables have been created.');
+//         app.listen(process.env.PORT, () => {
+//            // console.log("Server is running");
+//         });
+//     })
+//     .catch((err) => {
+//         console.error('Error creating database tables:', err);
+//     });
+mongoose.connect(process.env.MONGOOSE_CONNECT)
+.then(()=>{
+    app.listen(process.env.PORT,()=>
+    console.log("server has started"))
+})
+.catch((err)=>{
+console.log(err)
+})
